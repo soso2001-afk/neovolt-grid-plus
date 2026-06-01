@@ -1,0 +1,74 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Ressources examen (fournies par l'école / perso) — NE PAS pousser sur Git ---
+# Déjà disponibles sur Teams : sujet, dossier de cas, archive données
+sujet-examen.pdf
+00-sommaire-dossier-de-cas.pdf
+01-cahier-des-charges.pdf
+02-organisation-parties-prenantes.pdf
+03-si-existant.pdf
+04-contraintes-techniques-reglementaires-budgetaires.pdf
+05-dictionnaire-donnees.pdf
+06-glossaire-metier-energie.pdf
+07-stack-recommandee.pdf
+donnees.zip
+VOLET-D-RESUME-ILD.md
+
+# Données volumineuses (dézipper donnees.zip en local — voir donnees/README.md)
+donnees/*.csv
+donnees/*.parquet
+
+# Modèles / artefacts lourds
+*.pkl
+*.joblib
+*.h5
+*.onnx
+mlruns/
+models/artifacts/
+
+# Logs et bases locales
+*.log
+*.sqlite
+*.db
+
+# Docker / infra secrets
+secrets/
+*.pem
+
+# Build
+dist/
+build/
+*.egg-info/
+
+# Power BI / exports temporaires (ajuster si besoin)
+*.pbix.bak
+
+# Vidéos (déposer sur OneDrive, liens dans tronc-commun/livrables/)
+*.mp4
+*.mov
+*.avi
