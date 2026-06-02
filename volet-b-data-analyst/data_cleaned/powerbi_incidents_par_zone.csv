@@ -1,0 +1,9 @@
+zone,nb_incidents,duree_totale_minutes,duree_moyenne_minutes,nb_pdl_impactes_total,nb_pdl_impactes_moyen
+Bourg-Ancien,69,6433,93.23,31680,459.13
+Centre-Ville,45,4699,104.42,23011,511.36
+Coteaux-Ouest,50,5208,104.16,23772,475.44
+Parc-Tertiaire,51,4844,94.98,24896,488.16
+Plateau-Est,43,5145,119.65,22882,532.14
+Rives-Sud,48,4196,87.42,24900,518.75
+Val-Nord,62,5969,96.27,31947,515.27
+Zone-Industrielle,52,4819,92.67,26032,500.62

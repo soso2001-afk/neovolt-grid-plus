@@ -1,0 +1,5 @@
+segment,consommation_totale_kwh,consommation_moyenne_kwh,consommation_mediane_kwh,nb_clients,nb_pdl
+collectivite,573550.45,35.6641244870041,36.365,22,22
+entreprise,3640174.05,41.15469638556941,39.11,121,121
+particulier,3376819.885,10.84378555647611,9.32,426,426
+petit_pro,4596311.65,47.99774072952455,46.93,131,131
