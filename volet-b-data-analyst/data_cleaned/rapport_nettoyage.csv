@@ -1,0 +1,8 @@
+indicateur,valeur
+lignes_consommation_preparee,511700.0
+consommations_manquantes_initiales,6838.0
+consommations_negatives_detectees,1032.0
+consommations_aberrantes_iqr_detectees,54179.0
+consommations_imputees,62049.0
+valeurs_manquantes_restantes_conso_clean,0.0
+borne_haute_iqr_consommation,99.03
