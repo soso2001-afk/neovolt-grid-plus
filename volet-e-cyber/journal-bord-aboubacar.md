@@ -2,7 +2,7 @@
 
 Projet : Néovolt Grid+ – Volet Cybersécurité  
 Spécialité : ESIS Cybersécurité et Infrastructures Critiques (CIC)  
-Groupe : À compléter  
+Groupe : 2  
 
 Ce journal permet de suivre mes contributions individuelles réalisées pendant le projet Néovolt Grid+.
 
