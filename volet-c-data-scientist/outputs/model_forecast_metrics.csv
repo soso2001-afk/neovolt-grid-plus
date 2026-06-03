@@ -1,0 +1,4 @@
+modele,MAE_kwh,RMSE_kwh,MAPE_%
+Ridge Regression,3.39,4.17,0.02
+Random Forest,26.23,48.12,0.17
+Baseline naïve J-1,1479.04,2371.63,8.84
