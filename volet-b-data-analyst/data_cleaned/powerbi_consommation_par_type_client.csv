@@ -1,0 +1,4 @@
+type_client,consommation_totale_kwh,consommation_moyenne_kwh,consommation_mediane_kwh,nb_pdl,nb_clients
+industriel,1464109.0,31.79182680824268,34.75,63,63
+professionnel,7345927.15,47.62629359249487,46.31,211,211
+residentiel,3376819.885,10.84378555647611,9.32,426,426

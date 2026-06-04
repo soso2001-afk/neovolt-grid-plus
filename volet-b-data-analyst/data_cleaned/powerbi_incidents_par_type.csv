@@ -1,0 +1,6 @@
+type,nb_incidents,duree_totale_minutes,nb_pdl_impactes_total
+baisse_tension,81,8064,48604
+coupure,76,7727,47572
+maintenance_programmee,91,8215,10078
+panne_poste,69,6981,44481
+surtension,103,10326,58385
