@@ -25,6 +25,11 @@ env/
 Thumbs.db
 desktop.ini
 
+# Fichiers temporaires Microsoft Office (Word ouvert)
+~$*.docx
+~$*.doc
+~$*.xlsx
+
 # --- Ressources examen (fournies par l'école / perso) — NE PAS pousser sur Git ---
 # Déjà disponibles sur Teams : sujet, dossier de cas, archive données
 sujet-examen.pdf
@@ -39,8 +44,9 @@ sujet-examen.pdf
 donnees.zip
 VOLET-D-RESUME-ILD.md
 
-# Uploads pipeline (studio)
+# Uploads pipeline (studio) — garder les fichiers test_*.csv versionnés
 volet-d-ild/data/staging/*.csv
+!volet-d-ild/data/staging/test_*.csv
 
 # Données volumineuses (dézipper donnees.zip en local — voir donnees/README.md)
 donnees/**/*.csv

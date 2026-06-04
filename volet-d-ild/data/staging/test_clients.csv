@@ -1,0 +1,4 @@
+id_client,segment,commune,code_postal,date_entree,nb_personnes_foyer,surface_m2
+CLI-00001,particulier,Coteaux-Ouest,69340,2015-02-02,2.0,60
+CLI-00002,particulier,Plateau-Est,69310,2012-10-21,1.0,28
+CLI-00003,particulier,Plateau-Est,69310,2019-06-15,3.0,76

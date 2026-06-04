@@ -1,0 +1,4 @@
+id_pdl,id_client,zone,type_client,puissance_souscrite_kva,type_chauffage,type_compteur,date_pose,statut
+PDL-990001,CLI-90001,Centre-Ville,residentiel,6,electrique,communicant,2024-01-10,actif
+PDL-990002,CLI-90002,Plateau-Est,professionnel,36,gaz,communicant,2023-11-02,actif
+PDL-990003,CLI-90003,Rives-Sud,industriel,120,autre,ancien,2022-07-19,actif
