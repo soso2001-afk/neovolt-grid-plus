@@ -39,9 +39,12 @@ sujet-examen.pdf
 donnees.zip
 VOLET-D-RESUME-ILD.md
 
+# Uploads pipeline (studio)
+volet-d-ild/data/staging/*.csv
+
 # Données volumineuses (dézipper donnees.zip en local — voir donnees/README.md)
-donnees/*.csv
-donnees/*.parquet
+donnees/**/*.csv
+donnees/**/*.parquet
 
 # Modèles / artefacts lourds
 *.pkl

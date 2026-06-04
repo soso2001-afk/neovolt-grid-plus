@@ -1,3 +1,7 @@
 # Intégration
 
-Docker Compose et scripts de démo (assemblage des volets).
+```powershell
+docker compose up --build
+```
+
+API : http://localhost:8000/docs

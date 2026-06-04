@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: neovolt
+      POSTGRES_PASSWORD: neovolt
+      POSTGRES_DB: neovolt
+    ports:
+      - "5432:5432"
+    volumes:
+      - neovolt_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U neovolt -d neovolt"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ../volet-d-ild
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://neovolt:neovolt@db:5432/neovolt
+      DONNEES_PATH: /data
+      # Test rapide (~2 min). Supprimer pour charger les ~513k relevés.
+      INGEST_LIMIT_ROWS: "100000"
+      # false = pipeline lancé depuis l'interface /studio
+      AUTO_INGEST_ON_START: "false"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../donnees/donnees:/data:ro
+      - ../volet-d-ild/data/staging:/app/data/staging
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  neovolt_pg:

@@ -18,7 +18,8 @@ Chacun travaille dans son dossier volet.
 
 ## Git — règles équipe
 
-**Ne pas pousser sur `main` directement.** `main` = code stable / validé par le groupe.
+**Ne pas pousser sur `main`.** Branche protégée : seul le propriétaire du repo peut fusionner sur `main`.  
+Si Git refuse ton push → crée une branche + Pull Request (c’est normal).
 
 ### Workflow
 

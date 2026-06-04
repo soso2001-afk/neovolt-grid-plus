@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Néovolt — Data Pipeline Studio</title>
+  <style>
+    :root {
+      --bg: #0f1419; --panel: #1a2332; --panel2: #243044; --border: #3d4f6f;
+      --accent: #0078d4; --accent2: #50e6ff; --ok: #6ccb5f; --err: #f1707b;
+      --run: #ff8c00; --text: #e8ecf1; --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    header {
+      background: linear-gradient(90deg, #004578, #0078d4);
+      padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    header h1 { font-size: 1.1rem; font-weight: 600; }
+    header span { font-size: 0.85rem; opacity: 0.9; }
+    .badge { padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+    .badge.idle { background: var(--panel2); }
+    .badge.running { background: var(--run); color: #000; }
+    .badge.success { background: var(--ok); color: #000; }
+    .badge.error { background: var(--err); }
+    main { display: grid; grid-template-columns: 1fr 380px; gap: 16px; padding: 16px; max-width: 1200px; margin: 0 auto; }
+    @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .card h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 12px; }
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+    button {
+      background: var(--accent); color: #fff; border: none; padding: 6px 12px;
+      border-radius: 4px; cursor: pointer; font-size: 0.8rem;
+    }
+    button:hover { filter: brightness(1.1); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    button.secondary { background: var(--panel2); border: 1px solid var(--border); }
+    button.small { padding: 4px 8px; font-size: 0.75rem; }
+    button.run-step { background: #107c10; }
+    .pipeline-flow { display: flex; flex-direction: column; align-items: center; gap: 0; padding: 8px 0; }
+    .node {
+      width: 100%; max-width: 520px; background: var(--panel2); border: 2px solid var(--border);
+      border-radius: 8px; padding: 12px 16px; transition: border-color 0.2s;
+    }
+    .node.source { border-color: #569cd6; }
+    .node.sink { border-color: #4ec9b0; display: flex; align-items: center; gap: 12px; }
+    .node.running { border-color: var(--run); box-shadow: 0 0 12px rgba(255,140,0,0.4); }
+    .node.success { border-color: var(--ok); }
+    .node.error { border-color: var(--err); }
+    .node-head { display: flex; align-items: center; gap: 12px; }
+    .node .icon { font-size: 1.5rem; }
+    .node .info { flex: 1; }
+    .node .title { font-weight: 600; font-size: 0.95rem; }
+    .node .sub { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+    .node .pill { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; background: var(--bg); }
+    .file-custom { color: var(--accent2); }
+    .step-actions {
+      margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+    }
+    .step-actions input[type="file"] { font-size: 0.7rem; max-width: 140px; color: var(--muted); }
+    .arrow { width: 2px; height: 16px; background: var(--border); position: relative; }
+    .arrow::after {
+      content: ""; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+      border: 5px solid transparent; border-top-color: var(--border);
+    }
+    .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+    .stat { background: var(--bg); padding: 10px; border-radius: 6px; text-align: center; }
+    .stat .val { font-size: 1.4rem; font-weight: 700; color: var(--accent2); }
+    .stat .lbl { font-size: 0.7rem; color: var(--muted); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 500; }
+    .st-success { color: var(--ok); }
+    .st-error { color: var(--err); }
+    .st-running { color: var(--run); }
+    .msg { margin-top: 8px; padding: 8px; background: var(--bg); border-radius: 4px; font-size: 0.8rem; color: var(--muted); }
+    a { color: var(--accent2); }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Néovolt Grid+ — Pipeline Studio</h1>
+      <span>Choisir un fichier par étape · ou lancer tout le pipeline</span>
+    </div>
+    <span id="globalBadge" class="badge idle">idle</span>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Pipeline designer</h2>
+      <div class="toolbar">
+        <button id="btnRun">▶ Lancer tout le pipeline</button>
+        <button id="btnRefresh" class="secondary">↻ Actualiser</button>
+        <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;color:var(--muted)">
+          <input type="checkbox" id="chkReset" checked />
+          Réinitialiser toute la base (run complet)
+        </label>
+      </div>
+      <div id="pipelineFlow" class="pipeline-flow"></div>
+      <p id="pipelineMsg" class="msg"></p>
+    </section>
+
+    <aside>
+      <div class="card" style="margin-bottom:16px">
+        <h2>Métriques</h2>
+        <div class="stats">
+          <div class="stat"><div class="val" id="stCompteurs">—</div><div class="lbl">Compteurs</div></div>
+          <div class="stat"><div class="val" id="stReleves">—</div><div class="lbl">Relevés</div></div>
+        </div>
+        <p class="msg"><a href="/docs" target="_blank">API Swagger →</a></p>
+      </div>
+      <div class="card">
+        <h2>Journal ingestion_logs</h2>
+        <table>
+          <thead><tr><th>Fichier</th><th>Statut</th><th>Lignes</th></tr></thead>
+          <tbody id="logTable"></tbody>
+        </table>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    const API = "";
+    let pollTimer = null;
+    let pipelineDef = null;
+
+    async function fetchJson(url, opts) {
+      const r = await fetch(API + url, opts);
+      if (!r.ok) throw new Error(await r.text() || r.statusText);
+      return r.json();
+    }
+
+    function statusClass(st) {
+      if (st === "running") return "running";
+      if (st === "success") return "success";
+      if (st === "error") return "error";
+      return "";
+    }
+
+    function renderPipeline(def, status) {
+      pipelineDef = def;
+      const flow = document.getElementById("pipelineFlow");
+      const stepMap = {};
+      (status?.steps || []).forEach(s => { stepMap[s.id] = s; });
+
+      let html = "";
+      def.nodes.forEach((node, i) => {
+        const step = stepMap[node.id];
+        const st = step?.status || (node.type === "source" || node.type === "sink" ? "" : "pending");
+
+        if (node.type === "activity") {
+          const isCustom = node.file_source === "custom";
+          const fileLabel = isCustom
+            ? `<span class="file-custom">📎 ${node.file_name} (upload)</span>`
+            : `📄 ${node.fichier} (défaut)`;
+          let sub = fileLabel;
+          if (step?.lignes != null) sub += ` · ${step.lignes.toLocaleString()} lignes`;
+          if (step?.error) sub = `<span style="color:var(--err)">${step.error.slice(0, 100)}</span>`;
+
+          html += `<div class="node activity ${statusClass(st)}">
+            <div class="node-head">
+              <span class="icon">${node.icon}</span>
+              <div class="info">
+                <div class="title">${node.label}</div>
+                <div class="sub">${sub}</div>
+              </div>
+              ${st ? `<span class="pill">${st}</span>` : ""}
+            </div>
+            <div class="step-actions">
+              <input type="file" accept=".csv" id="file-${node.id}" />
+              <button type="button" class="small secondary" onclick="uploadFile('${node.id}')">Charger CSV</button>
+              <button type="button" class="small secondary" onclick="validateFile('${node.id}')">Vérifier</button>
+              <button type="button" class="small secondary" onclick="clearFile('${node.id}')">Défaut</button>
+              <button type="button" class="small run-step" onclick="runStep('${node.id}')">▶ Cette étape</button>
+            </div>
+          </div>`;
+        } else {
+          html += `<div class="node ${node.type} ${statusClass(st)}">
+            <span class="icon">${node.icon}</span>
+            <div class="info"><div class="title">${node.label}</div>
+            <div class="sub">${node.fichier || node.table || ""}</div></div>
+          </div>`;
+        }
+        if (i < def.nodes.length - 1) html += '<div class="arrow"></div>';
+      });
+      flow.innerHTML = html;
+    }
+
+    function showValidation(res) {
+      const msg = document.getElementById("pipelineMsg");
+      if (!res.validation) {
+        msg.textContent = res.message || res.error || "";
+        msg.style.color = res.ok ? "var(--ok)" : "var(--err)";
+        return;
+      }
+      const v = res.validation;
+      let text = v.message || "";
+      if (v.missing_columns?.length) {
+        text += "\nManquantes : " + v.missing_columns.join(", ");
+      }
+      if (v.columns_found?.length) {
+        text += "\nColonnes trouvées : " + v.columns_found.join(", ");
+      }
+      if (v.row_count != null) text += `\nLignes : ${v.row_count.toLocaleString()}`;
+      msg.textContent = text;
+      msg.style.color = v.ok ? "var(--ok)" : "var(--err)";
+      msg.style.whiteSpace = "pre-wrap";
+    }
+
+    async function uploadFile(stepId) {
+      const input = document.getElementById("file-" + stepId);
+      if (!input?.files?.length) {
+        alert("Choisis d'abord un fichier .csv");
+        return;
+      }
+      const fd = new FormData();
+      fd.append("file", input.files[0]);
+      const r = await fetch(API + `/api/v1/pipeline/steps/${stepId}/upload`, { method: "POST", body: fd });
+      const res = await r.json();
+      if (!r.ok) {
+        showValidation({ ok: false, error: res.detail || res.error, validation: res.validation || res });
+        return;
+      }
+      showValidation(res);
+      await refresh();
+    }
+
+    async function validateFile(stepId) {
+      try {
+        const v = await fetchJson(`/api/v1/pipeline/steps/${stepId}/validate`);
+        showValidation({ ok: v.ok, validation: v });
+      } catch (e) {
+        document.getElementById("pipelineMsg").textContent = e.message;
+        document.getElementById("pipelineMsg").style.color = "var(--err)";
+      }
+    }
+
+    async function clearFile(stepId) {
+      await fetchJson(`/api/v1/pipeline/steps/${stepId}/upload`, { method: "DELETE" });
+      document.getElementById("pipelineMsg").textContent = "Retour au fichier par défaut";
+      await refresh();
+    }
+
+    async function runStep(stepId) {
+      const truncate = confirm(
+        `Lancer uniquement « ${stepId} » ?\n\nOK = vider la table cible avant import\nAnnuler = ajouter sans vider`
+      );
+      try {
+        await fetchJson(`/api/v1/pipeline/steps/${stepId}/run`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ truncate_table: truncate }),
+        });
+        document.getElementById("pipelineMsg").textContent = `Étape ${stepId} démarrée…`;
+        await refresh();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    function renderLogs(logs) {
+      document.getElementById("logTable").innerHTML = logs.slice(0, 12).map(l => `
+        <tr>
+          <td title="${l.fichier}">${l.fichier.replace(".csv","")}</td>
+          <td class="st-${l.statut}">${l.statut}</td>
+          <td>${l.lignes_ingerees ?? "—"}</td>
+        </tr>`).join("");
+    }
+
+    async function refresh() {
+      const [def, status, stats, logs] = await Promise.all([
+        fetchJson("/api/v1/pipeline/definition"),
+        fetchJson("/api/v1/pipeline/status"),
+        fetchJson("/api/v1/stats"),
+        fetchJson("/api/v1/ingestion/logs?limit=15"),
+      ]);
+      const badge = document.getElementById("globalBadge");
+      badge.textContent = status.state;
+      badge.className = "badge " + status.state;
+      renderPipeline(def, status);
+      document.getElementById("pipelineMsg").textContent =
+        status.message || (def.ingest_limit_rows
+          ? `Mode test : max ${Number(def.ingest_limit_rows).toLocaleString()} relevés`
+          : "Par étape : charge un CSV puis ▶ Cette étape");
+      document.getElementById("stCompteurs").textContent = stats.compteurs.toLocaleString();
+      document.getElementById("stReleves").textContent = stats.releves.toLocaleString();
+      renderLogs(logs);
+      const busy = status.state === "running";
+      document.getElementById("btnRun").disabled = busy;
+      document.querySelectorAll(".run-step").forEach(b => b.disabled = busy);
+      if (busy && !pollTimer) pollTimer = setInterval(refresh, 2000);
+      else if (!busy && pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+    }
+
+    document.getElementById("btnRun").onclick = async () => {
+      try {
+        await fetchJson("/api/v1/pipeline/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reset_db: document.getElementById("chkReset").checked }),
+        });
+        await refresh();
+      } catch (e) { alert(e.message); }
+    };
+
+    document.getElementById("btnRefresh").onclick = refresh;
+    refresh();
+  </script>
+</body>
+</html>
