@@ -162,8 +162,6 @@ Exemples d’alertes possibles :
 
 ## Conclusion
 
-L’architecture du volet D apporte une base technique claire au projet Néovolt Grid+ : pipeline d’ingestion, API, base PostgreSQL, Docker Compose et interface de pilotage.
+L’architecture du prototype apporte une base technique claire au projet Néovolt Grid+ : pipeline d’ingestion, API, base PostgreSQL, Docker Compose et interface de pilotage.
 
 Du point de vue cybersécurité, les priorités sont la protection de l’API, la sécurisation des uploads CSV, la maîtrise des accès à PostgreSQL, la protection des secrets, la limitation des ports exposés et l’exploitation des `ingestion_logs`.
-
-Cette analyse permet d’aligner le volet E-Cyber avec le prototype réel du groupe, tout en gardant une approche réaliste pour un projet de sprint.
